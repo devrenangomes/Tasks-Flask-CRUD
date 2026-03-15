@@ -6,6 +6,7 @@ app = Flask(__name__)
 tasks = []
 task_id_control = 1
 
+# Criação de tarefa 
 @app.route('/tasks', methods = ['POST'])
 def create_task():
     global task_id_control
@@ -17,6 +18,7 @@ def create_task():
     return jsonify({'message': 'Nova tarefa criada com sucesso'})
 
 
+# Lista de todas as tarefas
 @app.route('/tasks', methods = ['GET'])
 def get_tasks():
     task_list = [task.to_dict() for task in tasks]
@@ -28,6 +30,7 @@ def get_tasks():
     return jsonify(output)
 
 
+# Tarefa específica
 @app.route('/tasks/<int:id>', methods = ['GET'])
 def get_task(id):
     for t in tasks:
@@ -36,6 +39,8 @@ def get_task(id):
             
     return jsonify({'message': 'Não foi possível encontrar a atividade.'}), 404
 
+
+# Atualização de tarefa
 @app.route('/tasks/<int:id>', methods = ['PUT'])
 def update_task(id):
     task = None
@@ -52,6 +57,8 @@ def update_task(id):
 
     return jsonify({'message': 'Tarefa atualizada com sucesso.'})
 
+
+# Deleção de tarefa
 @app.route('/tasks/<int:id>', methods = ['DELETE'])
 def delete_task(id):
     task = None
