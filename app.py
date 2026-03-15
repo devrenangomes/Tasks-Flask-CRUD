@@ -6,7 +6,7 @@ app = Flask(__name__)
 tasks = []
 task_id_control = 1
 
-@app.route('/tasks', methods=['POST'])
+@app.route('/tasks', methods = ['POST'])
 def create_task():
     global task_id_control
     data = request.get_json()
@@ -35,6 +35,24 @@ def get_task(id):
             return jsonify(t.to_dict())
             
     return jsonify({'message': 'Não foi possível encontrar a atividade.'}), 404
+
+@app.route('/tasks/<int:id>', methods = ['PUT'])
+def update_task(id):
+    task = None
+    for t in tasks:
+        if t.id == id:
+            task = t
+    if task == None:
+        return jsonify({'message': 'Não foi possível encontrar a atividade'}), 404
+        
+    data = request.get_json()
+    task.title = data.get('title')
+    task.description = data.get('description')
+    task.completed = data.get('completed')
+
+    return jsonify({'message': 'Tarefa atualizada com sucesso.'})
+
+    
 
 if __name__ == "__main__":
     app.run(debug = True)
