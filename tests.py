@@ -13,6 +13,10 @@ def test_create_task():
 
     response = requests.post(f'{BASE_URL}/tasks', json = new_task_data)
     assert response.status_code == 200
+    response_json = response.json()
+    assert 'message' in response_json
+    assert 'id' in response_json
+    tasks.append(response_json['id'])
 
 def test_get_tasks():
     response = requests.get(f'{BASE_URL}/tasks')
@@ -28,6 +32,30 @@ def test_get_task():
         task_id = tasks[0]
         response = requests.get(f'{BASE_URL}/tasks/{task_id}')
         assert response.status_code == 200
-        response_json = response.get_json()
+        response_json = response.json()
         assert task_id == response_json['id']
+
+
+def test_update_task():
+    if tasks:
+        task_id = tasks[0]
+        payload = {
+            'completed': True,
+            'title': 'Novo título',
+            'description': 'Nova descrição'
+        }
+    
+        response = requests.put(f'{BASE_URL}/tasks/{task_id}', json = payload)
+        assert response.status_code == 200
+        
+        response_json = response.json()
+        assert 'message' in response_json
+
+        response = requests.get(f'{BASE_URL}/tasks/{task_id}')
+        assert response.status_code == 200
+        
+        response_json = response.json()
+        assert response_json['title'] == payload['title']
+        assert response_json['description'] == payload['description']
+        assert response_json['completed'] == payload['completed']
 
